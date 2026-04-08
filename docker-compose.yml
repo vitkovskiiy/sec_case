@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: github_notifier_app
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DB_URL=postgres://postgres:secret@db:5432/notifier_db
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=secret
+      - DB_NAME=notifier_db
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
+
+  db:
+    image: postgres:15-alpine
+    container_name: github_notifier_db
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: notifier_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
