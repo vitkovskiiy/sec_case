@@ -3,12 +3,21 @@
     "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "node-pg-migrate": "^8.0.4",
-    "nodemon": "^3.1.14",
     "pg": "^8.20.0"
   },
   "scripts": {
-    "migrate:create": "node-pg-migrate create",
-    "migrate:up": "node-pg-migrate up",
-    "start": "nodemon src/server.js"
+    "build": "tsc",
+    "migrate:create": "node-pg-migrate -m src/migrations create",
+    "migrate:up": "node-pg-migrate -r ts-node/register -m migrations up",
+    "start": "npm run build && npm run migrate:up && node dist/server.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.2",
+    "@types/pg": "^8.20.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
   }
 }
