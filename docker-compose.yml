@@ -1,24 +1,6 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  app:
-    build: .
-    container_name: github_notifier_app
-    ports:
-      - "3000:3000"
-    environment:
-      - PORT=3000
-      - DATABASE_URL=postgres://postgres:secret@db:5432/notifier_db
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=secret
-      - DB_NAME=notifier_db
-    depends_on:
-      - db
-    volumes:
-      - ./src:/app/src
-
   db:
     image: postgres:15-alpine
     container_name: github_notifier_db
@@ -30,6 +12,24 @@ services:
       POSTGRES_DB: notifier_db
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d notifier_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  app:
+    build: .
+    container_name: github_notifier_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "npm run migrate && npm run dev"
 volumes:
   pgdata:
