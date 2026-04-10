@@ -1,13 +1,17 @@
 import { transporter } from "./nodemailer";
-export class Mailer {
+import { generateToken } from "./tools/tokenGenerator";
+
+
+export class Mailer{
   async sendMail(email: string) {
+    const token = generateToken();
     const info = await transporter.sendMail({
       from: "flicks2006@gmail.com",
       to: email,
       subject: "Hello",
-      text: "Hello world?",
+      text: `Your token: ${token}`,
       html: "<b>Hello world?</b>",
     });
-    return info
+    return {mail:info,token:token}
   }
 }

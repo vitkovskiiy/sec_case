@@ -6,3 +6,5 @@ export class DomainError extends Error {
 }
 export class AlreadySubscribedError extends DomainError {}
 export class RepositoryNotFoundError extends DomainError {}
+export class SyntaxError extends DomainError {}
+export class DatabaseError extends DomainError {}

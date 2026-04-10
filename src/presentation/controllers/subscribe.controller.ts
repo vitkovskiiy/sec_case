@@ -1,6 +1,7 @@
 
 import { Request,Response } from "express";
 import { SubscribeService } from "../../application/services/subscribe.service";
+import { AlreadySubscribedError, RepositoryNotFoundError, SyntaxError } from "../../domain/error";
 export class SubscribeController {
   constructor(private readonly subscribeService: SubscribeService) {}
 
@@ -8,11 +9,20 @@ export class SubscribeController {
     try {
       const { email, repo } = req.body; 
       const subscribe = this.subscribeService.createSubscribe(email, repo);
-      if(!subscribe){
-        throw new Error("error while subscribe");
-      }
+      res.status(200).json({message: "Subscription successful. Confirmation email sent."})
     } catch (error) {
-        console.log(error)
+        console.log(error);
+        if(error instanceof SyntaxError){
+          res.status(400).json({message:"Invalid input (e.g., invalid repo format)"})
+        }
+        if(error instanceof RepositoryNotFoundError){
+          res.status(404).json({message:"Repository not found on GitHub"})
+        }
+        if(error instanceof AlreadySubscribedError){
+          res.status(409).json({message:"Email already subscribed to this repository"})
+        }
+        
+        
     }
   }
 }
