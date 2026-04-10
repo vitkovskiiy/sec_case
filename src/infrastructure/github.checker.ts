@@ -1,4 +1,4 @@
-export class checkRepoExists {
+export class GitHubChecker {
   static async check(repoPath: string): Promise<boolean> {
     try {
       const response = await fetch(`https://api.github.com/repos/${repoPath}`)
