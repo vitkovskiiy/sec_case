@@ -3,6 +3,6 @@ export const generateToken = () => {
       for (let i: number = 0; i <= 6; i++) {
         token.push(Math.floor(Math.random() * 10));
       }
-      console.log(token.join(''));
+      return token.join('')
 }
 generateToken();

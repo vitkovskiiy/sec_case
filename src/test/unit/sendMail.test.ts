@@ -7,4 +7,5 @@ test('If miler working correctly return true', async () => {
     const mailer = new Mailer()
     const result = await mailer.sendMail(FAKE_CLIENT);
     expect(result).toHaveProperty('messageId');
+    expect(result.token).toHaveLength(6)
 });

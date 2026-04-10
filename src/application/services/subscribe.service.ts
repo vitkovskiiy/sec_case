@@ -20,6 +20,6 @@ export class SubscribeService {
         if (!isSaved) {
            throw new AlreadySubscribedError("Email already subscribed to this repository")
         }
-        const mailer = await this.mailer.sendMail(email); 
+        const mailer = await this.mailer.sendMail(email);
     }
 }

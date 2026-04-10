@@ -20,7 +20,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       throw new DatabaseError("Error in database");
     }
   }
-  async save(subscription: Subscription) {
+  async saveSubscription(subscription: Subscription) {
     try {
       const insertSubQuery = `
         INSERT INTO subscriptions (email, repo_name) 
@@ -35,6 +35,19 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       return true;
     } catch (error) {
       throw new DatabaseError("Error in database");
+    }
+  }
+
+  async saveToken(token:string){
+    try {
+      const insertSubQuery = `
+        INSERT INTO subscriptions (token) 
+        VALUES ($1, $2) 
+        ON CONFLICT (email, repo_name) DO NOTHING
+        RETURNING id;
+      `;
+    } catch (error) {
+      
     }
   }
 }
