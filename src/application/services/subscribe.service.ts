@@ -24,4 +24,7 @@ export class SubscribeService {
         }
         const mailer = await this.mailer.sendMail(email,token);
     }
+    async confirmEmail(token:string){
+
+    }
 }
