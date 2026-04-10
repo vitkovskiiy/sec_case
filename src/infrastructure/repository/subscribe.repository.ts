@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 import { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRepository";
 import { Subscription } from "../../domain/entities/Subscription";
-import { DatabaseError } from "../../domain/error";
+import { DatabaseError, DomainError } from "../../domain/error";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
   constructor(private readonly db: Pool) {}
@@ -24,7 +24,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     try {
       const insertSubQuery = `
         INSERT INTO subscriptions (email, repo_name) 
-        VALUES ($1, $2) 
+        VALUES ($1, $2)
         ON CONFLICT (email, repo_name) DO NOTHING
         RETURNING id;
       `;
@@ -38,16 +38,21 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     }
   }
 
-  async saveToken(token:string){
+  async saveToken(email:string,token:string){
     try {
       const insertSubQuery = `
         INSERT INTO subscriptions (token) 
-        VALUES ($1, $2) 
+        VALUES ($1)
         ON CONFLICT (email, repo_name) DO NOTHING
         RETURNING id;
       `;
+      const result = await this.db.query(insertSubQuery,[email,token])
+      if(result.rowCount === 0){
+        throw new DomainError("Error in database")
+      }
+      return true
     } catch (error) {
-      
+      throw new DatabaseError("Error in database");
     }
   }
 }
