@@ -1,3 +1,3 @@
 export interface IMailer {
-    sendMail(email:string):Promise<boolean>
+    sendMail(email:string,token:string):Promise<{message:object}>
 }

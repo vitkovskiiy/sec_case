@@ -3,6 +3,7 @@ import { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRe
 import {IGitHubChecker} from "../../domain/interfaces/IGitHubChecker"
 import {IMailer} from "../../domain/interfaces/IMailer"
 import { Subscription } from "../../domain/entities/Subscription";
+import { generateToken } from "../../infrastructure/tools/tokenGenerator";
 
 
 export class SubscribeService {
@@ -15,11 +16,12 @@ export class SubscribeService {
     async createSubscribe(email: string, repo: string) {
         await this.validator.check(repo);
         await this.repository.addRepo(repo);
+        const token = generateToken()
         const subscription = new Subscription(email, repo);
-        const isSaved = await this.repository.save(subscription);
+        const isSaved = await this.repository.saveSubscription(subscription,token);
         if (!isSaved) {
            throw new AlreadySubscribedError("Email already subscribed to this repository")
         }
-        const mailer = await this.mailer.sendMail(email);
+        const mailer = await this.mailer.sendMail(email,token);
     }
 }

@@ -8,7 +8,7 @@ export class SubscribeController {
   async subscribeRepo(req:Request, res:Response) {
     try {
       const { email, repo } = req.body; 
-      const subscribe = this.subscribeService.createSubscribe(email, repo);
+      const subscribe = await this.subscribeService.createSubscribe(email, repo);
       res.status(200).json({message: "Subscription successful. Confirmation email sent."})
     } catch (error) {
         console.log(error);

@@ -17,18 +17,19 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       await this.db.query(insertRepoQuery, [repo]);
       return true;
     } catch (error) {
+      console.log(error)
       throw new DatabaseError("Error in database");
     }
   }
-  async saveSubscription(subscription: Subscription) {
+  async saveSubscription(subscription: Subscription,token:string) {
     try {
       const insertSubQuery = `
-        INSERT INTO subscriptions (email, repo_name) 
-        VALUES ($1, $2)
+        INSERT INTO subscriptions (email, repo_name,token,is_confirmed) 
+        VALUES ($1, $2, $3,false)
         ON CONFLICT (email, repo_name) DO NOTHING
         RETURNING id;
       `;
-      const result = await this.db.query(insertSubQuery, [subscription.email, subscription.repo]);
+      const result = await this.db.query(insertSubQuery, [subscription.email, subscription.repo,token]);
       if (result.rowCount === 0) {
         return false;
       }
