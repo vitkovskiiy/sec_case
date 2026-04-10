@@ -1,7 +1,7 @@
 import { Pool } from "pg";
 import { ISubscriptionRepository } from "../../domain/interfaces/ISubscriptionRepository";
 import { Subscription } from "../../domain/entities/Subsciption";
-import { DomainError,RepositoryNotFoundError,AlreadySubscribedError } from "../../domain/error";
+
 
 export class SubscriptionRepository implements ISubscriptionRepository {
   constructor(private readonly db: Pool) {}
@@ -17,7 +17,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       await this.db.query(insertRepoQuery, [repo]);
       return true
     } catch (error) {
-      throw new DomainError("Failed to save subscription");
+      return false
     }
   }
   async save(subsciption:Subscription) {
