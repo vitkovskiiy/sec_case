@@ -1,7 +1,7 @@
 export class GitHubChecker {
-  static async check(repoPath: string): Promise<boolean> {
+  static async check(repo: string): Promise<boolean> {
     try {
-      const response = await fetch(`https://api.github.com/repos/${repoPath}`)
+      const response = await fetch(`https://api.github.com/repos/${repo}`)
       if(response.ok){
         return true;
       }

@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { subscribeController } from "../../index";
 
-const router = Router();
+export const subscribeRouter = Router();
 
-router.post('/',subscribeController.subscribeRepo(req,res))
+subscribeRouter.post('/',(req,res) => subscribeController.subscribeRepo(req,res))
 
-export default router;
