@@ -12,6 +12,7 @@ export const up = (pgm) => {
   pgm.createTable("repositories", {
     name: { type: "varchar(255)", primaryKey: true },
     last_seen_tag: { type: "varchar(255)", notNull: false },
+    tag_name: {type: "varchar(255)", notNull:false},
     created_at: {
       type: "timestamp",
       notNull: true,

@@ -10,14 +10,18 @@ import { TokenService } from "./application/services/token.service";
 import { UnsubscribeController } from "./presentation/controllers/unsubscribe.controller";
 import { UnsubscribeRepository } from "./infrastructure/repository/unsubscribe.repository";
 import { UnsubscribeService } from "./application/services/unsubscribe.service";
-
+import { ScannerRepository } from "./infrastructure/repository/scanner.repository";
+import { ScannerService } from "./application/services/scanner.service";
 import { FindController } from "./presentation/controllers/findSubscribe.controller";
 import { FindRepository } from "./infrastructure/repository/findSubscribes.repository";
 import { FindService } from "./application/services/findSubscribe.service";
 
 
+
 const checker = new GitHubChecker();
 const mailer = new Mailer();
+export const scannerRepository = new ScannerRepository(pool);
+export const scannerService = new ScannerService(scannerRepository,checker,mailer) 
 
 //find repo container 
 const findRepository = new FindRepository(pool)

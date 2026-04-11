@@ -1,8 +1,6 @@
+import { IMailer } from "../domain/interfaces/IMailer";
 import { transporter } from "./nodemailer";
-
-
-
-export class Mailer{
+export class Mailer implements IMailer{
   async sendMail(email: string,token:string) {
     const info = await transporter.sendMail({
       from: "flicks2006@gmail.com",
@@ -13,4 +11,16 @@ export class Mailer{
     });
     return {message:info}
   }
+  async sendNotify(email:string,repo:string,latestTag){
+    console.log(email,repo,latestTag)
+    const info = await transporter.sendMail({
+      from: "flicks2006@gmail.com",
+      to: email,
+      subject: `New update on repository ${repo}`,
+      text: `Repository ${repo} has new update version ${latestTag}`,
+      html: "",
+    });
+    return {message:info}
+  } 
 }
+
