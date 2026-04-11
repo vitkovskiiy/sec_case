@@ -16,9 +16,9 @@ export class SubscribeService {
     async createSubscribe(email: string, repo: string) {
         const subscription = new Subscription(email, repo);
         const isRepo = await this.validator.check(repo);
-        await this.repository.addRepo(repo);
         const token = generateToken();
         const isSaved = await this.repository.saveSubscription(subscription,token);
+        console.log(isSaved)
         if (!isSaved) {
            throw new AlreadySubscribedError("Email already subscribed to this repository")
         }

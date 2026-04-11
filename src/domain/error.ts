@@ -8,3 +8,4 @@ export class AlreadySubscribedError extends DomainError {}
 export class RepositoryNotFoundError extends DomainError {}
 export class SyntaxError extends DomainError {}
 export class DatabaseError extends DomainError {}
+export class NotFoundToken extends DomainError {}
