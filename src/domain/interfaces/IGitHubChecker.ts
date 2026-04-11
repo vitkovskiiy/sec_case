@@ -1,3 +1,3 @@
 export interface IGitHubChecker { 
-   check(repo:string): Promise<object>
+   check(repo:string): Promise<boolean>
 }
