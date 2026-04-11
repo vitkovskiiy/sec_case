@@ -1,6 +1,5 @@
 import { test, expect, vi } from 'vitest';
 import { Mailer } from '../../infrastructure/mailer';
-import nodemailer from 'nodemailer'; // Импортируем, чтобы проверять вызовы
 
 vi.mock('nodemailer', () => ({
   default: {

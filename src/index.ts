@@ -7,10 +7,15 @@ import { Mailer } from "./infrastructure/mailer";
 import { TokenRepository } from "./infrastructure/repository/token.repository";
 import { TokenController } from "./presentation/controllers/token.controller";
 import { TokenService } from "./application/services/token.service";
-
+import { UnsubscribeController } from "./presentation/controllers/unsubscribe.controller";
+import { UnsubscribeRepository } from "./infrastructure/repository/unsubscribe.repository";
+import { UnsubscribeService } from "./application/services/unsubscribe.service";
 const checker = new GitHubChecker();
 const mailer = new Mailer();
-
+//unsubscribe container
+const unsubscribeRepository = new UnsubscribeRepository(pool)
+const unsubscribeService = new UnsubscribeService(unsubscribeRepository)
+export const unsubscribeController = new UnsubscribeController(unsubscribeService)
 //token container
 export const tokenRepository = new TokenRepository(pool);
 const tokenService = new TokenService(tokenRepository);

@@ -1,7 +1,7 @@
 
 import { Request,Response } from "express";
 import { SubscribeService } from "../../application/services/subscribe.service";
-import { AlreadySubscribedError, RepositoryNotFoundError, SyntaxError } from "../../domain/error";
+import { AlreadySubscribedError, DomainError, RepositoryNotFoundError, SyntaxError } from "../../domain/error";
 export class SubscribeController {
   constructor(private readonly subscribeService: SubscribeService) {}
 
@@ -12,8 +12,8 @@ export class SubscribeController {
       res.status(200).json({message: "Subscription successful. Confirmation email sent."})
     } catch (error) {
         console.log(error);
-        if(error instanceof SyntaxError){
-          res.status(400).json({message:"Invalid input (e.g., invalid repo format)"})
+        if(error instanceof DomainError){
+          res.status(400).json(error.message)
         }
         if(error instanceof RepositoryNotFoundError){
           res.status(404).json({message:"Repository not found on GitHub"})
