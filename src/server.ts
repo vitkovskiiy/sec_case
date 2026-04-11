@@ -4,6 +4,7 @@ import {subscribeRouter} from "./presentation/routes/subscribe.router"
 import { tokenRouter } from './presentation/routes/token.router';
 import {unsubscribeRouter} from './presentation/routes/unsubscribe.router'
 import { findRouter } from './presentation/routes/findSubscribe.router';
+import { startScannerCron } from "./application/services/scanner.worker"; // <--
 
 
 const app = express();
@@ -19,4 +20,5 @@ app.use("/subscriptions", findRouter)
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
+  startScannerCron()
 });
