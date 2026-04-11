@@ -5,16 +5,16 @@ afterEach(() => {
 });
 
 test("возвращает true, если Гитхаб ответил 200", async () => {
-  const fetchSpy = vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+  const fetchMock = vi.fn().mockResolvedValue({
     ok: true,
     status: 200,
     json: async () => ({})
-  }));
+  });
+  vi.stubGlobal('fetch', fetchMock);
 
   const checker = new GitHubChecker();
-  const repo = "vitkovskiiy/Whitty";
+  const result = await checker.check("vitkovskiiy/Whitty");
 
-  const result = await checker.check(repo);
   expect(result).toBe(true);
-  expect(fetchSpy).toHaveBeenCalledWith(expect.stringContaining(repo));
+  expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining("vitkovskiiy/Whitty"));
 });
