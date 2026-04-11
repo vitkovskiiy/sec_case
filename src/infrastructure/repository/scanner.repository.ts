@@ -35,7 +35,11 @@ export class ScannerRepository implements IScannerRepository {
   }
 
   async getAllSubscribers(repo:string) {
-    const insertQuery = `select s.email from subscriptions s where s.repo_name = $1`;
+    const insertQuery = `
+    SELECT s.email 
+    FROM subscriptions s 
+    WHERE s.repo_name = $1 AND is_confirmed = true
+  `;
     const query = await this.db.query(insertQuery,[repo])
     console.log(query.rows)
     if(query.rowCount === 0){throw new DomainError("Database can't find any old tag")}

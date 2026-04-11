@@ -22,7 +22,7 @@ export class SubscribeService {
         if (!isSaved) {
            throw new AlreadySubscribedError("Email already subscribed to this repository")
         }
-        const mailer = await this.mailer.sendMail(email,token);
+        const mailer = await this.mailer.sendMail(email,token,repo);
     }
     async confirmEmail(token:string){
 
