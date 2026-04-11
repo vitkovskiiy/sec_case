@@ -8,7 +8,7 @@ export class GitHubChecker implements IGitHubChecker {
       if(!response.ok){
         throw new RepositoryNotFoundError("Error accuring verify repository(owner/repo)")
       }
-      return response;
+      return true;
     } catch (error) {
         console.error(`Something happened while checking repo:`, error);
         throw new RepositoryNotFoundError("Error accuring verify repository(owner/repo)")
