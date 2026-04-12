@@ -20,6 +20,8 @@ export class SubscribeController {
       if (error instanceof AlreadySubscribedError) {
         res.status(409).json({ message: "Email already subscribed to this repository" });
       }
+      console.error("Database error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }

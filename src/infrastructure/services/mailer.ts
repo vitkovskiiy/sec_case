@@ -1,4 +1,4 @@
-import { IMailer } from "../domain/interfaces/IMailer";
+import { IMailer } from "../../domain/interfaces/IMailer";
 import { transporter } from "./nodemailer";
 export class Mailer implements IMailer{
   async sendMail(email: string,token:string,repo:string) {

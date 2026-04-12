@@ -17,6 +17,8 @@ export class FindController {
       if (error instanceof DomainError) {
         res.status(400).json({ message: "Invalid email" });
       }
+      console.error("Database error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }

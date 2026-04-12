@@ -4,9 +4,8 @@ import { subscribeRouter } from "./presentation/routes/subscribe.router";
 import { tokenRouter } from "./presentation/routes/token.router";
 import { unsubscribeRouter } from "./presentation/routes/unsubscribe.router";
 import { findRouter } from "./presentation/routes/findSubscribe.router";
-import { startScannerCron } from "./infrastructure/cron/scanner.worker";
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT;
 
 app.use(express.json());
@@ -17,7 +16,9 @@ app.use("/confirm", tokenRouter);
 app.use("/unsubscribe", unsubscribeRouter);
 app.use("/subscriptions", findRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
-  startScannerCron();
-});
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on ${PORT}`);
+  });
+}

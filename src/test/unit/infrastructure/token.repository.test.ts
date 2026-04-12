@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { TokenRepository } from '../../infrastructure/repository/token.repository';
+import { TokenRepository } from '../../../infrastructure/repositories/token.repository';
 import { Pool } from 'pg';
 
 describe('TokenRepository (Unit Test with Mocks)', () => {

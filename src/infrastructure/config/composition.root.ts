@@ -1,19 +1,19 @@
 import { SubscribeService } from "../../application/services/subscribe.service";
-import { GitHubChecker } from "../github.checker";
+import { GitHubChecker } from "../services/github.checker";
 import { SubscribeController } from "../../presentation/controllers/subscribe.controller";
-import { SubscriptionRepository } from "../repository/subscribe.repository";
+import { SubscriptionRepository } from "../repositories/subscribe.repository";
 import { pool } from "./database.config";
-import { Mailer } from "../mailer";
-import { TokenRepository } from "../repository/token.repository";
+import { Mailer } from "../services/mailer";
+import { TokenRepository } from "../repositories/token.repository";
 import { TokenController } from "../../presentation/controllers/token.controller";
 import { TokenService } from "../../application/services/token.service";
 import { UnsubscribeController } from "../../presentation/controllers/unsubscribe.controller";
-import { UnsubscribeRepository } from "../repository/unsubscribe.repository";
+import { UnsubscribeRepository } from "../repositories/unsubscribe.repository";
 import { UnsubscribeService } from "../../application/services/unsubscribe.service";
-import { ScannerRepository } from "../repository/scanner.repository";
+import { ScannerRepository } from "../repositories/scanner.repository";
 import { ScannerService } from "../../application/services/scanner.service";
 import { FindController } from "../../presentation/controllers/findSubscribe.controller";
-import { FindRepository } from "../repository/findSubscribes.repository";
+import { FindRepository } from "../repositories/findSubscribes.repository";
 import { FindService } from "../../application/services/findSubscribe.service";
 
 const checker = new GitHubChecker();

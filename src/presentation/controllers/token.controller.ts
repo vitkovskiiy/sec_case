@@ -17,6 +17,8 @@ export class TokenController {
       if (error instanceof NotFoundToken) {
         res.status(404).json({ message: "Token not found" });
       }
+      console.error("Database error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }

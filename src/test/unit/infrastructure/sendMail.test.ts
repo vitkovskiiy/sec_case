@@ -1,5 +1,5 @@
 import { test, expect, vi } from 'vitest';
-import { Mailer } from '../../infrastructure/mailer';
+import { Mailer } from '../../../infrastructure/services/mailer';
 
 vi.mock('nodemailer', () => ({
   default: {

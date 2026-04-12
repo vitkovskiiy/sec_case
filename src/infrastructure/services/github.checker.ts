@@ -1,5 +1,5 @@
-import { RepositoryNotFoundError } from "../domain/errors/error";
-import { IGitHubChecker } from "../domain/interfaces/IGitHubChecker";
+import { RepositoryNotFoundError } from "../../domain/errors/error";
+import { IGitHubChecker } from "../../domain/interfaces/IGitHubChecker";
 
 export class GitHubChecker implements IGitHubChecker {
   private getHeaders(): Record<string, string> {
