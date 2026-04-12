@@ -1,4 +1,4 @@
-import { RepositoryNotFoundError } from "../domain/error";
+import { RepositoryNotFoundError } from "../domain/errors/error";
 import { IGitHubChecker } from "../domain/interfaces/IGitHubChecker";
 
 export class GitHubChecker implements IGitHubChecker {
@@ -15,7 +15,7 @@ export class GitHubChecker implements IGitHubChecker {
   async check(repo: string): Promise<boolean> {
     try {
       const response = await fetch(`https://api.github.com/repos/${repo}`, {
-        headers: this.getHeaders()
+        headers: this.getHeaders(),
       });
 
       if (!response.ok) {
@@ -24,7 +24,7 @@ export class GitHubChecker implements IGitHubChecker {
         }
         throw new Error(`HTTP Error: ${response.status}`);
       }
-      
+
       return true;
     } catch (error) {
       throw new RepositoryNotFoundError("Error verifying repository");
@@ -33,22 +33,21 @@ export class GitHubChecker implements IGitHubChecker {
   async checkReleases(repo: string): Promise<string | undefined> {
     try {
       const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
-        headers: this.getHeaders()
+        headers: this.getHeaders(),
       });
       if (!response.ok) {
         if (response.status === 429 || response.status === 403) {
           console.warn(`[GitHubChecker] Rate limit exceeded для ${repo}.`);
-          return undefined; 
+          return undefined;
         }
         if (response.status === 404) {
-          return undefined; 
+          return undefined;
         }
         console.error(`[GitHubChecker] Ошибка API ${response.status} when req to ${repo}`);
         return undefined;
       }
       const data = await response.json();
       return data.tag_name;
-
     } catch (error) {
       console.error(`[GitHubChecker] Network error ${repo}:`, error);
       return undefined;

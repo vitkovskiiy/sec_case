@@ -10,9 +10,10 @@ vi.mock('nodemailer', () => ({
 }));
 
 test('If mailer working correctly return true', async () => {
+  const repo:string = "fake_repo"
     const token: string = "1s2f3f";
     const FAKE_CLIENT = 'test@gmail.com';
     const mailer = new Mailer();
-    const result = await mailer.sendMail(FAKE_CLIENT, token);
+    const result = await mailer.sendMail(FAKE_CLIENT, token,repo);
     expect(result.message).toHaveProperty('messageId', 'test-id');;
 });

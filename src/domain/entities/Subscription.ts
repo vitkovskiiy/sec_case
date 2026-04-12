@@ -1,11 +1,11 @@
-import { DomainError } from "../error";
+import { DomainError } from "../errors/error";
 
 export class Subscription {
   constructor(
     public readonly email: string,
     public readonly repo: string,
   ) {
-    this.email = email.trim()
+    this.email = email.trim();
     if (!this.email.includes("@")) {
       throw new DomainError("Email should have @");
     }

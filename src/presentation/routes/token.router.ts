@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { tokenController } from "../../index";
+import { tokenController } from "../../infrastructure/config/composition.root";
 
 export const tokenRouter = Router();
 
-tokenRouter.get('/:token',(req,res) => tokenController.validateToken(req,res))
-
+tokenRouter.get("/:token", (req, res) => tokenController.validateToken(req, res));

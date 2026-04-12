@@ -1,4 +1,4 @@
-import { scannerService } from "../../index";
+import { scannerService } from "../config/composition.root";
 import cron from "node-cron";
 
 async function runWorker() {
@@ -13,6 +13,7 @@ async function runWorker() {
 
 export function startScannerCron() {
   console.log("🕒 Scanner is running. Scanner waiting for timer...");
+  //every 5 minute but its only for test because github api has limit
   cron.schedule("*/1 * * * *", async () => {
     console.log("Start scanner...");
     try {

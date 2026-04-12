@@ -1,19 +1,19 @@
-import { DomainError } from "../../domain/error";
+import { DomainError } from "../../domain/errors/error";
 import { Pool } from "pg";
-import { IScannerRepository } from "../../domain/interfaces/IScannerRepository";
-
-
+import { IScannerRepository } from "../../domain/repositories/IScannerRepository";
 
 export class ScannerRepository implements IScannerRepository {
   constructor(private readonly db: Pool) {}
 
-  async returnListOfRepositories(){
+  async returnListOfRepositories() {
     const insertQuery = `
          SELECT r."name" FROM repositories r
       `;
-    const query = await this.db.query(insertQuery)
-    if(query.rowCount === 0){throw new DomainError("Database can't find any repo")}
-    return query.rows
+    const query = await this.db.query(insertQuery);
+    if (query.rowCount === 0) {
+      throw new DomainError("Database can't find any repo");
+    }
+    return query.rows;
   }
 
   async getOldTag(repoName: string): Promise<string | undefined> {
@@ -23,26 +23,30 @@ export class ScannerRepository implements IScannerRepository {
     const result2 = await this.db.query(query2, [repoName]);
     if (result.rows.length > 0) {
       const tag = result.rows[0].tag_name;
-      return tag === null ? undefined : tag; 
+      return tag === null ? undefined : tag;
     }
-    return undefined; 
+    return undefined;
   }
-  async updateTag(repo:string,tag: string) {
+  async updateTag(repo: string, tag: string) {
     const insertQuery = `UPDATE repositories r SET tag_name = $2 WHERE r."name" = $1`;
-    const query = await this.db.query(insertQuery,[repo,tag])
-    if(query.rowCount === 0){throw new DomainError("Database can't find any old tag")}
-    return true
+    const query = await this.db.query(insertQuery, [repo, tag]);
+    if (query.rowCount === 0) {
+      throw new DomainError("Database can't find any old tag");
+    }
+    return true;
   }
 
-  async getAllSubscribers(repo:string) {
+  async getAllSubscribers(repo: string) {
     const insertQuery = `
     SELECT s.email 
     FROM subscriptions s 
     WHERE s.repo_name = $1 AND is_confirmed = true
   `;
-    const query = await this.db.query(insertQuery,[repo])
-    console.log(query.rows)
-    if(query.rowCount === 0){throw new DomainError("Database can't find any old tag")}
-    return query.rows
+    const query = await this.db.query(insertQuery, [repo]);
+    console.log(query.rows);
+    if (query.rowCount === 0) {
+      throw new DomainError("Database can't find any old tag");
+    }
+    return query.rows;
   }
 }
