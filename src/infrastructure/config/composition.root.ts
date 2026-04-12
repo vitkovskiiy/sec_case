@@ -15,12 +15,15 @@ import { ScannerService } from "../../application/services/scanner.service";
 import { FindController } from "../../presentation/controllers/findSubscribe.controller";
 import { FindRepository } from "../repositories/findSubscribes.repository";
 import { FindService } from "../../application/services/findSubscribe.service";
+import { MetricsProvider } from "../services/metrics.provider";
+import { MetricsController } from "../../presentation/controllers/metrics.controller";
 
 const checker = new GitHubChecker();
 const mailer = new Mailer();
 export const scannerRepository = new ScannerRepository(pool);
 export const scannerService = new ScannerService(scannerRepository, checker, mailer);
-
+const metricsProvider = new MetricsProvider();
+export const metricsController = new MetricsController(metricsProvider);
 //find repo container
 const findRepository = new FindRepository(pool);
 const findService = new FindService(findRepository);

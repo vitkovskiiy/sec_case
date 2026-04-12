@@ -70,6 +70,8 @@ Dependencies are wired manually in `composition.root.ts` — no DI framework ove
 | Tests | Vitest |
 | CI | GitHub Actions |
 
+
+* **Monitoring**: prom-client (Prometheus metrics)
 ---
 
 ## Getting started
@@ -109,3 +111,8 @@ npm run test       # run all tests
 **Integration tests** spin up the full Express app and run real HTTP requests against it, verifying that controllers, services, and the database work correctly end to end.
 
 Vitest was chosen for its native TypeScript support and fast execution without a separate compilation step.
+
+## 🚀 Features
+* ...
+* **Monitoring**: Prometheus-compatible `/metrics` endpoint for real-time service health tracking (CPU, RAM, Event Loop).
+
