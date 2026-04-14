@@ -62,10 +62,8 @@ Dependencies are wired manually in `composition.root.ts` — no DI framework ove
 |---|---|
 | Runtime | Node.js 20+ |
 | Language | TypeScript |
-| HTTP | Express |
-| Database | PostgreSQL (`pg`) |
-| Email | Nodemailer (SMTP) |
-| GitHub API | Axios |
+| Backend | Express |
+| Database | PostgreSQL |
 | Scheduler | node-cron |
 | Tests | Vitest |
 | CI | GitHub Actions |
