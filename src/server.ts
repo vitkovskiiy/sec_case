@@ -5,7 +5,7 @@ import { tokenRouter } from "./presentation/routes/token.router";
 import { unsubscribeRouter } from "./presentation/routes/unsubscribe.router";
 import { findRouter } from "./presentation/routes/findSubscribe.router";
 import { metricsRouter } from "./presentation/routes/metrics.router";
-import {scannerService} from "./infrastructure/config/composition.root";
+import {startScannerCron} from "./infrastructure/cron/scanner.worker";
 
 export const app = express();
 const PORT = process.env.PORT;
@@ -23,6 +23,6 @@ if (process.env.NODE_ENV !== 'test') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`);
-    scannerService.checker()
+    startScannerCron()
   });
 }
