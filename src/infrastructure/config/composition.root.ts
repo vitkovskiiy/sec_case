@@ -20,9 +20,10 @@ import { MetricsController } from "../../presentation/controllers/metrics.contro
 
 const checker = new GitHubChecker();
 const mailer = new Mailer();
+const metricsProvider = new MetricsProvider();
+
 export const scannerRepository = new ScannerRepository(pool);
 export const scannerService = new ScannerService(scannerRepository, checker, mailer);
-const metricsProvider = new MetricsProvider();
 export const metricsController = new MetricsController(metricsProvider);
 //find repo container
 const findRepository = new FindRepository(pool);
