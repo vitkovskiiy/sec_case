@@ -6,7 +6,7 @@ export class UnsubscribeService implements IUnsubscribeService {
   constructor(private readonly repository: IUnsubscribeRepository) {}
   async deleteSubscribe(token: string) {
     const tokenEntity = new Token(token);
-    const tokenDelete = await this.repository.deleteConnect(tokenEntity.token);
+    await this.repository.deleteConnect(tokenEntity.token);
     return true;
   }
 }

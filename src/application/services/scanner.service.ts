@@ -1,7 +1,6 @@
 import { IGitHubChecker } from "../../domain/interfaces/IGitHubChecker";
 import { IMailer } from "../../domain/interfaces/IMailer";
 import { IScannerRepository } from "../../domain/repositories/IScannerRepository";
-
 export class ScannerService {
   constructor(
     private readonly repository: IScannerRepository,

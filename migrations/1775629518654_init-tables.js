@@ -21,7 +21,7 @@ export const up = (pgm) => {
   });
 
   pgm.createTable("subscriptions", {
-    id: "id",
+    id: {type: "varchar(255)", notNull:true},
     email: { type: "varchar(255)", notNull: true },
     token: { type: "varchar(64)", notNull: false },
     is_confirmed: { type: "boolean", notNull: true, default: false },

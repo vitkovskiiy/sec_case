@@ -1,27 +1,24 @@
-import { AlreadySubscribedError } from "../../domain/errors/error";
-import { ISubscriptionRepository } from "../../domain/repositories/ISubscriptionRepository";
 import { IGitHubChecker } from "../../domain/interfaces/IGitHubChecker";
 import { IMailer } from "../../domain/interfaces/IMailer";
-import { Subscription } from "../../domain/entities/Subscription";
 import { generateToken } from "../../infrastructure/tools/tokenGenerator";
+import {ISubscriptionFactory} from "../../domain/interfaces/ISubscriptionFactory";
+import {ISubscriptionRepository} from "../../domain/repositories/ISubscriptionRepository";
 
 export class SubscribeService {
   constructor(
-    private readonly repository: ISubscriptionRepository,
+    private readonly subscriptionFactory: ISubscriptionFactory,
     private readonly validator: IGitHubChecker,
     private readonly mailer: IMailer,
+    private readonly db: ISubscriptionRepository,
   ) {}
 
   async createSubscribe(email: string, repo: string) {
-    const subscription = new Subscription(email, repo);
-    const isRepo = await this.validator.check(repo);
+    await this.validator.check(repo);
     const token = generateToken();
-    const isSaved = await this.repository.saveSubscription(subscription, token);
-    console.log(isSaved);
-    if (!isSaved) {
-      throw new AlreadySubscribedError("Email already subscribed to this repository");
-    }
-    const mailer = await this.mailer.sendMail(email, token, repo);
+    await this.db.newRepo(repo);
+    const subscription = await this.subscriptionFactory.createSubscription(email, repo);
+    await this.db.saveSubscription(subscription, token);
+    await this.mailer.sendMail(subscription.email, subscription.repo, token);
+    return true
   }
-  async confirmEmail(token: string) {}
 }

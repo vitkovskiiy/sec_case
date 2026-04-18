@@ -5,7 +5,7 @@ import { tokenRouter } from "./presentation/routes/token.router";
 import { unsubscribeRouter } from "./presentation/routes/unsubscribe.router";
 import { findRouter } from "./presentation/routes/findSubscribe.router";
 import { metricsRouter } from "./presentation/routes/metrics.router";
-import {startScannerCron} from "./infrastructure/cron/scanner.worker";
+import { startScannerCron } from "./infrastructure/cron/scanner.worker";
 
 export const app = express();
 const PORT = process.env.PORT;

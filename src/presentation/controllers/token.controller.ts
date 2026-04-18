@@ -7,7 +7,7 @@ export class TokenController {
   async validateToken(req: Request, res: Response) {
     try {
       const token = req.params.token as string;
-      const validateToken = await this.tokenService.validateToken(token);
+      await this.tokenService.validateToken(token);
       res.status(200).json({ message: "Subscription confirmed successfully" });
     } catch (error) {
       console.log(error);

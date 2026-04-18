@@ -1,39 +1,37 @@
 import { Pool } from "pg";
 import { ISubscriptionRepository } from "../../domain/repositories/ISubscriptionRepository";
 import { Subscription } from "../../domain/entities/Subscription";
-import { DatabaseError, DomainError } from "../../domain/errors/error";
 
-export class SubscriptionRepository implements ISubscriptionRepository {
+export class PostgresSubscriptionRepository implements ISubscriptionRepository {
   constructor(private readonly db: Pool) {}
-  private async ensureRepoExists(repo: string): Promise<void> {
-    try {
-      const query = `
-        INSERT INTO repositories (name) 
-        VALUES ($1) 
-        ON CONFLICT (name) DO NOTHING;
-      `;
-      await this.db.query(query, [repo]);
-    } catch (error) {
-      console.error("Ошибка при создании репозитория:", error);
-      throw new DatabaseError("Error creating repository record");
+   async exists(repo: string,email:string): Promise<boolean> {
+      const query = await this.db.query(`
+        SELECT * FROM subscriptions s
+        WHERE s.repo_name = $1
+        AND s.email = $2
+      `, [repo,email]);
+      if(query.rowCount === 0){
+        return false //add repo if dont exists
+      }
+      return true
     }
-  }
   async saveSubscription(subscription: Subscription, token: string) {
-    try {
-      await this.ensureRepoExists(subscription.repo);
-      const insertSubQuery = `
+      const result = await this.db.query(`
         INSERT INTO subscriptions (email, repo_name,token,is_confirmed) 
         VALUES ($1, $2, $3,false)
         ON CONFLICT (email, repo_name) DO NOTHING
         RETURNING id;
-      `;
-      const result = await this.db.query(insertSubQuery, [subscription.email, subscription.repo, token]);
+      `, [subscription.email, subscription.repo, token]);
       if (result.rowCount === 0) {
         return false;
       }
       return true;
-    } catch (error) {
-      throw new DatabaseError("Error in database");
-    }
   }
+    async newRepo(repo:string): Promise<boolean> {
+        const result = await this.db.query(`SELECT r.name FROM repositories r WHERE r.name = $1`,[repo]);
+        if (result.rowCount === 0){
+            await this.db.query(`INSERT INTO repositories (name) VALUES ($1)`,[repo]);
+        }
+        return true
+    }
 }
