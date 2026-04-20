@@ -1,5 +1,7 @@
 import { Subscription } from "../entities/Subscription";
 
 export interface ISubscriptionRepository {
-  saveSubscription(subsciption: Subscription,token:string): Promise<boolean>;
+  exists(repo:string,email:string): Promise<boolean>;
+  saveSubscription(subscription: Subscription, token:string): Promise<boolean>;
+  newRepo(repo:string):Promise<boolean>;
 }

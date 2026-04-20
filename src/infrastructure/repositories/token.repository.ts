@@ -22,7 +22,9 @@ export class TokenRepository implements ITokenRepository {
         RETURNING id;
     `;
       const query1 = await this.db.query(insertRepoQuery2, [query.rows[0].id]);
-      console.log(query1);
+      if (query1.rowCount === 0) {
+        return false;
+      }
       return true;
     } catch (error) {
       console.log(error);

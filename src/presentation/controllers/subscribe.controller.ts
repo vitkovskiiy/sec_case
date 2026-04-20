@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { SubscribeService } from "../../application/services/subscribe.service";
-import { AlreadySubscribedError, DomainError, RepositoryNotFoundError, SyntaxError } from "../../domain/errors/error";
+import { AlreadySubscribedError, DomainError, RepositoryNotFoundError } from "../../domain/errors/error";
 export class SubscribeController {
   constructor(private readonly subscribeService: SubscribeService) {}
 
   async subscribeRepo(req: Request, res: Response) {
     try {
       const { email, repo } = req.body;
-      const subscribe = await this.subscribeService.createSubscribe(email, repo);
+      await this.subscribeService.createSubscribe(email, repo);
       res.status(200).json({ message: "Subscription successful. Confirmation email sent." });
     } catch (error) {
       console.log(error);

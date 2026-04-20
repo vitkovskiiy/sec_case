@@ -6,17 +6,12 @@ export class Subscription {
     public readonly repo: string,
   ) {
     this.email = email.trim();
+    console.log(this.email);
     if (!this.email.includes("@")) {
       throw new DomainError("Email should have @");
     }
     if (!this.repo.includes("/")) {
       throw new DomainError("Schema should be like owner/repo");
     }
-  }
-  public get getEmail() {
-    return this.email;
-  }
-  public get getRepo() {
-    return this.repo;
   }
 }

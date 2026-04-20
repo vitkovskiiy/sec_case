@@ -1,7 +1,7 @@
 import { SubscribeService } from "../../application/services/subscribe.service";
 import { GitHubChecker } from "../services/github.checker";
 import { SubscribeController } from "../../presentation/controllers/subscribe.controller";
-import { SubscriptionRepository } from "../repositories/subscribe.repository";
+import { PostgresSubscriptionRepository } from "../repositories/subscribe.repository";
 import { pool } from "./database.config";
 import { Mailer } from "../services/mailer";
 import { TokenRepository } from "../repositories/token.repository";
@@ -17,6 +17,7 @@ import { FindRepository } from "../repositories/findSubscribes.repository";
 import { FindService } from "../../application/services/findSubscribe.service";
 import { MetricsProvider } from "../services/metrics.provider";
 import { MetricsController } from "../../presentation/controllers/metrics.controller";
+import {SubscriptionFactory} from "../../domain/factories/SubscriptionFactory";
 
 const checker = new GitHubChecker();
 const mailer = new Mailer();
@@ -38,6 +39,7 @@ export const tokenRepository = new TokenRepository(pool);
 const tokenService = new TokenService(tokenRepository);
 export const tokenController = new TokenController(tokenService);
 //subscribe container
-const subscribeRepository = new SubscriptionRepository(pool);
-const subscribeService = new SubscribeService(subscribeRepository, checker, mailer);
+const subscribeRepository = new PostgresSubscriptionRepository(pool);
+const subscribeFactory = new SubscriptionFactory(subscribeRepository)
+const subscribeService = new SubscribeService(subscribeFactory, checker, mailer,subscribeRepository);
 export const subscribeController = new SubscribeController(subscribeService);

@@ -8,7 +8,7 @@ export class UnsubscribeController {
   async deleteSubscribe(req: Request, res: Response) {
     try {
       const token = req.params.token as string;
-      const validateToken = await this.unsubscribeService.deleteSubscribe(token);
+      await this.unsubscribeService.deleteSubscribe(token);
       res.status(200).json({ message: "Unsubscribed successfully" });
     } catch (error) {
       console.log(error);

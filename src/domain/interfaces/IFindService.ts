@@ -1,5 +1,5 @@
-import { SubscriptionDTO } from "../../presentation/dtos/subscriptionDto";
+import {Subscription} from "../entities/Subscription";
 
 export interface IFindService {
-    findSubscriptions(email:string):Promise<SubscriptionDTO[]>
+    findSubscriptions(email:string):Promise<Subscription[]>
 }
