@@ -1,25 +1,32 @@
-import { Request, Response } from "express";
-import { NotFoundToken, SyntaxError } from "../../domain/errors/error";
-import { IUnsubscribeService } from "../../domain/interfaces/IUnsubscribeService";
+import { Request, Response } from 'express';
+import { UnsubscribeCommandHandler } from '../../application/commands/unsubscribe/UnsubscribeCommandHandler';
+import { UnsubscribeCommand } from '../../application/commands/unsubscribe/UnsubscribeCommand';
+import { DomainError, NotFoundToken, SyntaxError } from '../../domain/errors/error';
 
 export class UnsubscribeController {
-  constructor(private readonly unsubscribeService: IUnsubscribeService) {}
+  constructor(private readonly handler: UnsubscribeCommandHandler) {}
 
-  async deleteSubscribe(req: Request, res: Response) {
+  async deleteSubscribe(req: Request, res: Response): Promise<void> {
     try {
-      const token = req.params.token as string;
-      await this.unsubscribeService.deleteSubscribe(token);
-      res.status(200).json({ message: "Unsubscribed successfully" });
+      const token = String(req.params.token);
+      const command = new UnsubscribeCommand(token);
+      await this.handler.execute(command);
+      res.status(200).json({ message: 'Unsubscribed successfully' });
     } catch (error) {
-      console.log(error);
-      if (error instanceof SyntaxError) {
-        res.status(400).json({ message: "Invalid token" });
-      }
       if (error instanceof NotFoundToken) {
-        res.status(404).json({ message: "Token not found" });
+        res.status(404).json({ message: 'Token not found' });
+        return;
       }
-      console.error("Database error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      if (error instanceof SyntaxError) {
+        res.status(400).json({ message: 'Invalid token' });
+        return;
+      }
+      if (error instanceof DomainError) {
+        res.status(400).json({ message: error.message });
+        return;
+      }
+      console.error('Unexpected error:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 }

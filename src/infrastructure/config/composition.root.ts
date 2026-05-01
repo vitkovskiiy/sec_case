@@ -1,45 +1,70 @@
-import { SubscribeService } from "../../application/services/subscribe.service";
-import { GitHubChecker } from "../services/github.checker";
-import { SubscribeController } from "../../presentation/controllers/subscribe.controller";
-import { PostgresSubscriptionRepository } from "../repositories/subscribe.repository";
-import { pool } from "./database.config";
-import { Mailer } from "../services/mailer";
-import { TokenRepository } from "../repositories/token.repository";
-import { TokenController } from "../../presentation/controllers/token.controller";
-import { TokenService } from "../../application/services/token.service";
-import { UnsubscribeController } from "../../presentation/controllers/unsubscribe.controller";
-import { UnsubscribeRepository } from "../repositories/unsubscribe.repository";
-import { UnsubscribeService } from "../../application/services/unsubscribe.service";
-import { ScannerRepository } from "../repositories/scanner.repository";
-import { ScannerService } from "../../application/services/scanner.service";
-import { FindController } from "../../presentation/controllers/findSubscribe.controller";
-import { FindRepository } from "../repositories/findSubscribes.repository";
-import { FindService } from "../../application/services/findSubscribe.service";
-import { MetricsProvider } from "../services/metrics.provider";
-import { MetricsController } from "../../presentation/controllers/metrics.controller";
-import {SubscriptionFactory} from "../../domain/factories/SubscriptionFactory";
+import { pool } from './database.config';
+import { GitHubChecker } from '../services/github.checker';
+import { Mailer } from '../services/mailer';
+import { MetricsProvider } from '../services/metrics.provider';
 
+// Repositories
+import { PostgresSubscriptionRepository } from '../repositories/subscribe.repository';
+import { TokenRepository } from '../repositories/token.repository';
+import { UnsubscribeRepository } from '../repositories/unsubscribe.repository';
+import { ScannerRepository } from '../repositories/scanner.repository';
+import { PostgresSubscriptionQueryRepository } from '../repositories/subscriptionQuery.repository';
+
+// Domain
+import { SubscriptionFactory } from '../../domain/factories/SubscriptionFactory';
+
+// Commands
+import { SubscribeCommandHandler } from '../../application/commands/subscribe/SubscribeCommandHandler';
+import { ConfirmSubscriptionCommandHandler } from '../../application/commands/confirm/ConfirmSubscriptionCommandHandler';
+import { UnsubscribeCommandHandler } from '../../application/commands/unsubscribe/UnsubscribeCommandHandler';
+
+// Queries
+import { GetSubscriptionsByEmailQueryHandler } from '../../application/queries/GetSubscriptionsByEmailQueryHandler';
+
+// Scanner (kept as service — internal scheduler, not HTTP-driven)
+import { ScannerService } from '../../application/services/scanner.service';
+
+// Controllers
+import { SubscribeController } from '../../presentation/controllers/subscribe.controller';
+import { TokenController } from '../../presentation/controllers/token.controller';
+import { UnsubscribeController } from '../../presentation/controllers/unsubscribe.controller';
+import { FindController } from '../../presentation/controllers/findSubscribe.controller';
+import { MetricsController } from '../../presentation/controllers/metrics.controller';
+
+// Infrastructure services
 const checker = new GitHubChecker();
 const mailer = new Mailer();
 const metricsProvider = new MetricsProvider();
 
-export const scannerRepository = new ScannerRepository(pool);
-export const scannerService = new ScannerService(scannerRepository, checker, mailer);
-export const metricsController = new MetricsController(metricsProvider);
-//find repo container
-const findRepository = new FindRepository(pool);
-const findService = new FindService(findRepository);
-export const findController = new FindController(findService);
-//unsubscribe container
-const unsubscribeRepository = new UnsubscribeRepository(pool);
-const unsubscribeService = new UnsubscribeService(unsubscribeRepository);
-export const unsubscribeController = new UnsubscribeController(unsubscribeService);
-//token container
-export const tokenRepository = new TokenRepository(pool);
-const tokenService = new TokenService(tokenRepository);
-export const tokenController = new TokenController(tokenService);
-//subscribe container
+// Repositories
 const subscribeRepository = new PostgresSubscriptionRepository(pool);
-const subscribeFactory = new SubscriptionFactory(subscribeRepository)
-const subscribeService = new SubscribeService(subscribeFactory, checker, mailer,subscribeRepository);
-export const subscribeController = new SubscribeController(subscribeService);
+const tokenRepository = new TokenRepository(pool);
+const unsubscribeRepository = new UnsubscribeRepository(pool);
+const subscriptionQueryRepository = new PostgresSubscriptionQueryRepository(pool);
+export const scannerRepository = new ScannerRepository(pool);
+
+// Domain factories
+const subscriptionFactory = new SubscriptionFactory(subscribeRepository);
+
+// Command Handlers
+const subscribeHandler = new SubscribeCommandHandler(
+  subscriptionFactory,
+  checker,
+  mailer,
+  subscribeRepository,
+);
+const confirmHandler = new ConfirmSubscriptionCommandHandler(tokenRepository);
+const unsubscribeHandler = new UnsubscribeCommandHandler(unsubscribeRepository);
+
+// Query Handlers
+const getSubscriptionsHandler = new GetSubscriptionsByEmailQueryHandler(subscriptionQueryRepository);
+
+// Scanner (internal service, not HTTP — CQS does not apply to cron workers)
+export const scannerService = new ScannerService(scannerRepository, checker, mailer);
+
+// Controllers
+export const subscribeController = new SubscribeController(subscribeHandler);
+export const tokenController = new TokenController(confirmHandler);
+export const unsubscribeController = new UnsubscribeController(unsubscribeHandler);
+export const findController = new FindController(getSubscriptionsHandler);
+export const metricsController = new MetricsController(metricsProvider);

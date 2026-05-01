@@ -1,24 +1,23 @@
-import { Request, Response } from "express";
-import { IFindService } from "../../domain/interfaces/IFindService";
-import { DomainError } from "../../domain/errors/error";
+import { Request, Response } from 'express';
+import { GetSubscriptionsByEmailQueryHandler } from '../../application/queries/GetSubscriptionsByEmailQueryHandler';
+import { GetSubscriptionsByEmailQuery } from '../../application/queries/GetSubscriptionsByEmailQuery';
+import { DomainError } from '../../domain/errors/error';
 
 export class FindController {
-  constructor(private readonly findService: IFindService) {}
+  constructor(private readonly handler: GetSubscriptionsByEmailQueryHandler) {}
 
-  async findByEmail(req: Request, res: Response) {
+  async findByEmail(req: Request, res: Response): Promise<void> {
     try {
-      const email = req.query.email;
-      if (!email) {
-        throw new DomainError("Email is require!");
-      }
-      const find = await this.findService.findSubscriptions(email as string);
-      res.status(200).json(find);
+      const query = new GetSubscriptionsByEmailQuery(req.query.email as string);
+      const result = await this.handler.execute(query);
+      res.status(200).json(result);
     } catch (error) {
       if (error instanceof DomainError) {
-        res.status(400).json({ message: "Invalid email" });
+        res.status(400).json({ message: error.message });
+        return;
       }
-      console.error("Database error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      console.error('Unexpected error:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 }

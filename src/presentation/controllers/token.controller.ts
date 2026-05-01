@@ -1,24 +1,32 @@
-import { Request, Response } from "express";
-import { NotFoundToken, SyntaxError } from "../../domain/errors/error";
-import { ITokenService } from "../../domain/interfaces/ITokenService";
-export class TokenController {
-  constructor(private readonly tokenService: ITokenService) {}
+import { Request, Response } from 'express';
+import { ConfirmSubscriptionCommandHandler } from '../../application/commands/confirm/ConfirmSubscriptionCommandHandler';
+import { ConfirmSubscriptionCommand } from '../../application/commands/confirm/ConfirmSubscriptionCommand';
+import { DomainError, NotFoundToken, SyntaxError } from '../../domain/errors/error';
 
-  async validateToken(req: Request, res: Response) {
+export class TokenController {
+  constructor(private readonly handler: ConfirmSubscriptionCommandHandler) {}
+
+  async validateToken(req: Request, res: Response): Promise<void> {
     try {
-      const token = req.params.token as string;
-      await this.tokenService.validateToken(token);
-      res.status(200).json({ message: "Subscription confirmed successfully" });
+      const token = String(req.params.token);
+      const command = new ConfirmSubscriptionCommand(token);
+      await this.handler.execute(command);
+      res.status(200).json({ message: 'Subscription confirmed successfully' });
     } catch (error) {
-      console.log(error);
-      if (error instanceof SyntaxError) {
-        res.status(400).json({ message: "Invalid token" });
-      }
       if (error instanceof NotFoundToken) {
-        res.status(404).json({ message: "Token not found" });
+        res.status(404).json({ message: 'Token not found' });
+        return;
       }
-      console.error("Database error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      if (error instanceof SyntaxError) {
+        res.status(400).json({ message: 'Invalid token' });
+        return;
+      }
+      if (error instanceof DomainError) {
+        res.status(400).json({ message: error.message });
+        return;
+      }
+      console.error('Unexpected error:', error);
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 }
