@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { SubscribeCommandHandler } from '../../application/commands/subscribe/SubscribeCommandHandler';
+import { ISubscribeCommandHandler } from '../../application/commands/subscribe/ISubscribeCommandHandler';
 import { SubscribeCommand } from '../../application/commands/subscribe/SubscribeCommand';
 import { AlreadySubscribedError, DomainError, RepositoryNotFoundError } from '../../domain/errors/error';
 
 export class SubscribeController {
-  constructor(private readonly handler: SubscribeCommandHandler) {}
+  constructor(private readonly handler: ISubscribeCommandHandler) {}
 
   async subscribeRepo(req: Request, res: Response): Promise<void> {
     try {

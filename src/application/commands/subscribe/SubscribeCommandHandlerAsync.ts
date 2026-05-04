@@ -2,22 +2,22 @@ import { IGitHubChecker } from '../../../domain/interfaces/IGitHubChecker';
 import { ISubscriptionFactory } from '../../../domain/interfaces/ISubscriptionFactory';
 import { ITokenGenerator } from '../../../domain/interfaces/ITokenGenerator';
 import { ISubscriptionRepository } from '../../../domain/repositories/ISubscriptionRepository';
-import { INotificationService } from '../../notifications/INotificationService';
+import { IEventBus } from '../../../infrastructure/event-bus/IEventBus';
 import { SubscriptionConfirmedEvent } from '../../events/SubscriptionConfirmedEvent';
 import { SubscribeCommand } from './SubscribeCommand';
 
 /**
- * SYNC variant: after saving subscription, directly calls NotificationService.
- * If notification fails — error propagates up (subscription still saved,
- * but caller receives 500). This is the observable trade-off of sync comms.
+ * ASYNC variant: after saving subscription, publishes an event to the bus.
+ * The handler returns immediately — notification happens out-of-band.
+ * If notification fails — subscriber logs the error, core op is unaffected.
  */
-export class SubscribeCommandHandler {
+export class SubscribeCommandHandlerAsync {
   constructor(
     private readonly subscriptionFactory: ISubscriptionFactory,
     private readonly githubChecker: IGitHubChecker,
     private readonly repository: ISubscriptionRepository,
     private readonly tokenGenerator: ITokenGenerator,
-    private readonly notificationService: INotificationService,
+    private readonly eventBus: IEventBus,
   ) {}
 
   async execute(command: SubscribeCommand): Promise<void> {
@@ -32,8 +32,8 @@ export class SubscribeCommandHandler {
     await this.repository.newRepo(command.repo);
     await this.repository.saveSubscription(subscription, token);
 
-    // SYNC: direct call — response time = core op + notification time
+    // ASYNC: publish event and return immediately — notification is fire-and-forget
     const event = new SubscriptionConfirmedEvent(subscription.email, subscription.repo, token);
-    await this.notificationService.onSubscriptionConfirmed(event);
+    await this.eventBus.publish('SubscriptionConfirmed', event);
   }
 }
